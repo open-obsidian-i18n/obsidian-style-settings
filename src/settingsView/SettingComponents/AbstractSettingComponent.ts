@@ -54,8 +54,8 @@ export abstract class AbstractSettingComponent extends Component {
 			return Number.NEGATIVE_INFINITY;
 		}
 
-		const title = getTitle(this.setting);
-		const description = getDescription(this.setting) || '';
+		const title = getTitle(this.setting, this.sectionId);
+		const description = getDescription(this.setting, this.sectionId) || '';
 
 		return Math.max(
 			fuzzysort.single(str, title)?.score ?? Number.NEGATIVE_INFINITY,

@@ -6,24 +6,66 @@ export const settingRegExp = /\/\*!?\s*@settings[\r\n]+?([\s\S]+?)\*\//g;
 export const nameRegExp = /^name:\s*(.+)$/m;
 export type ErrorList = Array<{ name: string; error: string }>;
 
-export function getTitle<T extends Meta>(config: T): string {
-	if (lang) {
-		return config[`title.${lang}` as keyof WithTitle] || config.title;
+/**
+ * i18n+ Global API interface for theme/snippet translation support
+ */
+interface I18nPlusGlobalAPI {
+	getTranslation(themeId: string, key: string): string | undefined;
+}
+
+declare global {
+	interface Window {
+		i18nPlus?: I18nPlusGlobalAPI;
+	}
+}
+
+/**
+ * Get title for a setting, with i18n+ translation support
+ * Priority: i18n+ external > CSS inline (title.{lang}) > original
+ */
+export function getTitle<T extends Meta>(config: T, sectionId?: string): string {
+	// 1. Try i18n+ external translation
+	if (window.i18nPlus?.getTranslation && sectionId && config.title) {
+		const key = config.title; // Use original English title as key
+		const translation = window.i18nPlus.getTranslation(sectionId, key);
+
+		console.log(`[Style Settings Debug] getTitle: sectionId='${sectionId}', key='${key}', result='${translation}'`);
+		if (translation) return translation;
+		// console.log(`[Style Settings Debug] MISSING Translation: sectionId='${sectionId}', key='${key}'`);
 	}
 
+	// 2. Try CSS inline translation (title.{lang})
+	if (lang) {
+		const inlineTranslation = config[`title.${lang}` as keyof WithTitle];
+		if (inlineTranslation) return inlineTranslation as string;
+	}
+
+	// 3. Return original
 	return config.title;
 }
 
-export function getDescription<T extends Meta>(config: T): string | undefined {
-	if (lang) {
-		return (
-			config[`description.${lang}` as keyof WithDescription] ||
-			config.description
-		);
+/**
+ * Get description for a setting, with i18n+ translation support
+ * Priority: i18n+ external > CSS inline (description.{lang}) > original
+ */
+export function getDescription<T extends Meta>(config: T, sectionId?: string): string | undefined {
+	// 1. Try i18n+ external translation
+	if (window.i18nPlus?.getTranslation && sectionId && config.description) {
+		const key = config.description; // Use original English description as key
+		const translation = window.i18nPlus.getTranslation(sectionId, key);
+		if (translation) return translation;
 	}
 
+	// 2. Try CSS inline translation (description.{lang})
+	if (lang) {
+		const inlineTranslation = config[`description.${lang}` as keyof WithDescription];
+		if (inlineTranslation) return inlineTranslation as string;
+	}
+
+	// 3. Return original
 	return config.description;
 }
+
 
 export function isValidDefaultColor(color: string) {
 	return /^(#|rgb|hsl)/.test(color);

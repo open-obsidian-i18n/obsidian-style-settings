@@ -194,6 +194,8 @@ export default class CSSSettingsPlugin extends Plugin {
 		const text = sheet?.ownerNode?.textContent?.trim();
 		if (!text) return;
 
+		// Reset regex lastIndex to avoid stale state from previous stylesheet
+		settingRegExp.lastIndex = 0;
 		let match = settingRegExp.exec(text);
 
 		if (match?.length) {

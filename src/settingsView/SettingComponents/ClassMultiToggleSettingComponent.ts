@@ -16,8 +16,8 @@ export class ClassMultiToggleSettingComponent extends AbstractSettingComponent {
 	render(): void {
 		if (!this.containerEl) return;
 
-		const title = getTitle(this.setting);
-		const description = getDescription(this.setting);
+		const title = getTitle(this.setting, this.sectionId);
+		const description = getDescription(this.setting, this.sectionId);
 
 		if (typeof this.setting.default !== 'string') {
 			return console.error(

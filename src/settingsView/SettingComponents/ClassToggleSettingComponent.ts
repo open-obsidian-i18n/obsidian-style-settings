@@ -10,8 +10,8 @@ export class ClassToggleSettingComponent extends AbstractSettingComponent {
 
 	render(): void {
 		if (!this.containerEl) return;
-		const title = getTitle(this.setting);
-		const description = getDescription(this.setting);
+		const title = getTitle(this.setting, this.sectionId);
+		const description = getDescription(this.setting, this.sectionId);
 
 		this.settingEl = new Setting(this.containerEl);
 		this.settingEl.setName(title);

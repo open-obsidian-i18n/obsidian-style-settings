@@ -192,8 +192,8 @@ export class HeadingSettingComponent extends AbstractSettingComponent {
 
 	render(): void {
 		if (!this.containerEl) return;
-		const title = getTitle(this.setting);
-		const description = getDescription(this.setting);
+		const title = getTitle(this.setting, this.sectionId);
+		const description = getDescription(this.setting, this.sectionId);
 
 		this.settingEl = new Setting(this.containerEl);
 		this.settingEl.setHeading();
@@ -335,7 +335,7 @@ export class HeadingSettingComponent extends AbstractSettingComponent {
 			b.setTooltip('Export settings');
 			b.extraSettingsEl.onClickEvent((e) => {
 				e.stopPropagation();
-				let title = getTitle(this.setting);
+				let title = getTitle(this.setting, this.sectionId);
 				title =
 					this.sectionName === title ? title : `${this.sectionName} > ${title}`;
 				this.settingsManager.export(
